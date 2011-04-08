@@ -51,10 +51,7 @@ function! s:AddMark()
     if exists("g:plexer_marks") == 0
         let g:plexer_marks = []
     endif
-
-    let line     = line('.')
-    let column   = col('.')
-    let new_mark = [line]
+    let line = line('.')
     call add(g:plexer_marks, line)
     call s:Echo("Added mark for Plexer", 1)
 endfunction
