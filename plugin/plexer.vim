@@ -8,6 +8,10 @@ if exists("g:loaded_plexer") || &cp
   finish
 endif
 
+" Set some global vars
+let g:plexer_from_line = 0
+let g:plexer_marks     = []
+
 
 " In certain situations, it allows you to echo something without 
 " having to hit Return again to do exec the command.
