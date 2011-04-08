@@ -11,6 +11,8 @@ endif
 " Set some global vars
 let g:plexer_from_line = 0
 let g:plexer_marks     = []
+let g:plexer_start     = 0
+let g:plexer_total_lines = line('$')
 
 
 " In certain situations, it allows you to echo something without 
@@ -27,22 +29,58 @@ function! s:Echo(msg, ...)
     endif
 
     let &ruler=x | let &showcmd=y
-endfun
+endfunction
+
+
+function! s:Relative()
+    if (g:plexer_total_lines == 0)
+        let g:plexer_total_lines = line('$')
+    endif
+    let current_line = line('.')
+    let difference = current_line - g:plexer_start 
+    return difference
+    call s:Echo("difference is ".difference", 1)
+endfunction
+
+
+function! s:AppendNewLine(number)
+    let _count = 0
+    while _count < a:number
+        call append(line('$'), '')
+        let _count = _count + 1
+    endwhile
+endfunction
 
 
 function! s:ApplyChange()
+    " if this is the start of an editing wrath
+    " save the line number
+    if (g:plexer_start == 0)
+        let g:plexer_start = line('.')
+    endif
+
+    let relative_line = s:Relative()
+
     if exists("g:plexer_marks") == 0
         call s:Echo("No Plexer marks set yet", 0)
         return
     endif
     let line   = line('.')
     let column = col('.')
+    let current_lines = line('$') - g:plexer_total_lines
 
     " Yank the line from start to end
     exe 'normal 0'
     exe 'normal y$'
+
     for position in g:plexer_marks
-        exec position
+        let relative_pos = position + relative_line + current_lines
+        if relative_pos > line('$')
+            let more_lines = relative_pos - line('$')
+            call s:AppendNewLine(more_lines)
+        endif
+        exe relative_pos
+        exe "normal 0"
         exe "normal D"
         exe 'normal "0P'
     endfor
@@ -52,6 +90,7 @@ endfunction
 
 
 function! s:AddMark()
+    let g:plexer_total_lines = line('$')
     if exists("g:plexer_marks") == 0
         let g:plexer_marks = []
     endif
@@ -62,7 +101,10 @@ endfunction
 
 
 function! s:ClearMarks()
-    let g:plexer_marks = []
+    let g:plexer_from_line = 0
+    let g:plexer_marks     = []
+    let g:plexer_start     = 0
+    let g:plexer_total_lines = line('$')
     call s:Echo("Cleared all marks for Plexer", 1)
 endfunction!
 
