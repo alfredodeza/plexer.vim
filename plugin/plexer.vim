@@ -74,7 +74,11 @@ function! s:ApplyChange()
     exe 'normal y$'
 
     for position in g:plexer_marks
-        let relative_pos = position + relative_line + current_lines
+        if line > position
+            let relative_pos = position + relative_line 
+        else
+            let relative_pos = position + relative_line + current_lines
+        endif
         if relative_pos > line('$')
             let more_lines = relative_pos - line('$')
             call s:AppendNewLine(more_lines)
