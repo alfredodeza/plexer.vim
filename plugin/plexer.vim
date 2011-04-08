@@ -27,6 +27,10 @@ endfun
 
 
 function! s:ApplyChange()
+    if exists("g:plexer_marks") == 0
+        call s:Echo("No Plexer marks set yet", 0)
+        return
+    endif
     let line   = line('.')
     let column = col('.')
 
@@ -50,8 +54,8 @@ function! s:AddMark()
 
     let line     = line('.')
     let column   = col('.')
-    let new_mark = [line, column]
-    call add(g:plexer_marks, new_mark)
+    let new_mark = [line]
+    call add(g:plexer_marks, line)
     call s:Echo("Added mark for Plexer", 1)
 endfunction
 
