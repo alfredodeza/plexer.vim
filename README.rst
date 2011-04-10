@@ -5,7 +5,9 @@ A multi-line multi-edit plugin for vim.
 Just mark your lines (as many as you want) edit a single one and
 apply your changes. Watch how everything propagates!
 
-![plexer show](http://www.cafepais.com/media/i/plexer.gif)
+.. image:: http://www.cafepais.com/media/i/plexer.gif
+   :scale: 50 %
+   :alt: alternate text
 
 
 Why?
