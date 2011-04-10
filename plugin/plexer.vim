@@ -112,6 +112,7 @@ function! s:ClearMarks()
     let g:plexer_marks     = []
     let g:plexer_start     = 0
     let g:plexer_total_lines = line('$')
+    sign unplace *
     call s:Echo("Cleared all marks for Plexer", 1)
 endfunction!
 
