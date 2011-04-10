@@ -1,6 +1,7 @@
 " File:        plexer.vim
 " Description: Edit multiple lines at the same time
 " Maintainer:  Alfredo Deza <alfredodeza AT gmail.com>
+" Url:         https://github.com/alfredodeza/plexer.vim
 " License:     MIT
 "============================================================================
 
