@@ -9,9 +9,9 @@ if exists("g:loaded_plexer") || &cp
 endif
 
 " Set some global vars
-let g:plexer_from_line = 0
-let g:plexer_marks     = []
-let g:plexer_start     = 0
+let g:plexer_from_line   = 0
+let g:plexer_marks       = []
+let g:plexer_start       = 0
 let g:plexer_total_lines = line('$')
 
 
@@ -55,6 +55,8 @@ endfunction
 function! s:ApplyChange()
     " if this is the start of an editing wrath
     " save the line number
+    let current_mode = mode()
+     
     if (g:plexer_start == 0)
         let g:plexer_start = line('.')
     endif
@@ -101,6 +103,7 @@ function! s:AddMark()
     let line = line('.')
     call add(g:plexer_marks, line)
     call s:Echo("Added mark for Plexer", 1)
+    call s:Highlight()
 endfunction
 
 
@@ -113,15 +116,24 @@ function! s:ClearMarks()
 endfunction!
 
 
+function! s:Start()
+    if (&modified == 1)
+        call s:ApplyChange()
+    endif
+    call s:Echo("Plexer mode ON", 0)
+endfunction
+
+
 function! s:Completion(ArgLead, CmdLine, CursorPos)
     let m_options      = "add\napply\nclear\n"
     let m_version      = "version\n"
-    return m_options . m_version
+    let m_visuals      = "show\nhide\n"
+    return m_options . m_version . m_visuals
 endfunction
 
 
 function! s:Version()
-    call s:Echo("plexer.vim version 0.0.1dev", 1)
+    call s:Echo("plexer.vim version 0.0.1", 1)
 endfunction
 
 
@@ -134,27 +146,19 @@ function! s:Proxy(action, ...)
         call s:ClearMarks()
     elseif (a:action == "version")
         call s:Version()
+    elseif (a:action == "show")
+        call s:Highlight()
+    elseif (a:action == "hide")
+        sign unplace *
     endif
 endfunction
 
+
 function s:Highlight()
-    hi RedBar ctermfg=white ctermbg=red guibg=red
-    let h_list = []
-    count = 0
+    sign define Plexer text=* linehl=Todo texthl=Error
     for position in g:plexer_marks
-        count = count + 1
-        if (count == 1)
-            add(h_list, '/\%'. position[0] . 'l/')
-        else
-            add(h_list, '|\%'. position[0] . 'l/')
+        execute(":sign place ". position ." line=". position ." name=Plexer file=".expand("%:p"))
     endfor
-    h_command = ""
-    for lines in h_list
-        h_command = h_command + lines
-    endfor
-    if h_command != ""
-        execute 'match RedBar '.h_command
-    endif
 endfunction
 
 command! -nargs=+ -complete=custom,s:Completion Plexer call s:Proxy(<f-args>)
